@@ -20,25 +20,7 @@ const HeadingNav = () => {
         }}
         className={"nav-link"}
       >
-        Google Books
-      </Link>
-      <Link
-        to="/"
-        onClick={() => {
-          setLocation("/");
-        }}
-        className={setClass("/")}
-      >
-        Search
-      </Link>
-      <Link
-        to="/saved"
-        onClick={() => {
-          setLocation("/saved");
-        }}
-        className={setClass("/saved")}
-      >
-        Saved
+        The Shoppies
       </Link>
     </Nav>
   );
