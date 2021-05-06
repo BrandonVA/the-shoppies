@@ -3,7 +3,7 @@ import Movies from "./pages/Movies";
 import NoMatch from "./pages/NoMatch";
 import HeadingNav from "./components/HeadingNav/HeadingNav";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import MoviesSaved from "./pages/MoviesSaved";
+// import MoviesSaved from "./pages/MoviesSaved";
 
 const App = () => {
   return (
@@ -14,9 +14,9 @@ const App = () => {
           <Route exact path="/">
             <Movies />
           </Route>
-          <Route exact path="/saved">
+          {/* <Route exact path="/saved">
             <MoviesSaved />
-          </Route>
+          </Route> */}
           <Route>
             <NoMatch />
           </Route>
