@@ -10,7 +10,6 @@ import {
   Row,
 } from "react-bootstrap";
 import StoredMovies from "../components/StoredMovies/StoredMovies";
-// import MoviesSaved from "../components/MoviesSaved.js/MoviesSaved";
 
 function Movie() {
   const [movies, setMovies] = useState([]);
@@ -24,66 +23,82 @@ function Movie() {
   }, []);
 
   const saveMovie = (movie) => {
+    // Creating movie object to save to the db
     const movieToSave = {
       title: movie.Title,
       releaseYear: movie.Year,
       image: movie.Poster,
       imdbID: movie.imdbID,
     };
-    API.saveMovie(movieToSave).then((res) => {
-      loadMovies();
-      console.log(this);
-    });
+    // Making the api call to save movie to the db
+    API.saveMovie(movieToSave)
+      .then((res) => {
+        // Refresh the saved movies list
+        loadMovies();
+      })
+      .catch((err) => console.log(err));
   };
 
   const handleInputChange = (event) => {
+    // Captures inputs name and value from the input element changed
     const { name, value } = event.target;
+    // Updating state with the current value
     setFormObject({ ...formObject, [name]: value });
-    console.log(cachedMovies);
+    // Creating a filter method that...
     const refinedMovies = cachedMovies.filter((movie) => {
-      console.log(movie);
-      console.log(value);
+      // will check if the new displayed results has the new value
       if (movie.Title.toLowerCase().includes(value) === true) {
         return movie;
       }
     });
-    console.log(refinedMovies);
-
+    // sets the state to the new results.
     setMovies(refinedMovies);
   };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
+    // encode the title that you are trying to search
     const encodeTitle = encodeURI(formObject.title);
-    console.log(encodeTitle);
+    // Calls the search movie function that will make an api call
     searchMovie(encodeTitle);
   };
+
   const searchMovie = (title) => {
-    API.searchOMDb(title).then((res) => {
-      console.log(res.data.Search);
-      setMovies(res.data.Search);
-      setCachedMovies(res.data.Search);
-      console.log("______________________");
-    });
+    // Makes the api call for searching for a movie
+    API.searchOMDb(title)
+      .then((res) => {
+        // Sets state and cached movies to be displayed.
+        setMovies(res.data.Search);
+        setCachedMovies(res.data.Search);
+      })
+      .catch((err) => console.log(err));
   };
 
   const loadMovies = () => {
+    // api call for getting saved movies
     API.getMovies()
       .then((res) => {
+        // then updated state with results
         setNominatedMovies(res.data);
+        // Creating an array for holding a list of the imdb IDs
+        //    This is used for setting the disabled value for save movie btn
+        //    which will make it so the user can't save it again.
         const arr = [];
+        // Loop through each movie and...
         res.data.forEach((movie) => {
+          // push the id into the array created
           arr.push(movie.imdbID);
-          console.log(movie.imdbID);
         });
-        console.log(arr);
+        // After the loop is created update the state with list
         setSavedMoveIDs(arr);
       })
       .catch((err) => console.log(err));
   };
 
   const deleteMovie = (id) => {
+    // api call for deleting a movie
     API.deleteMovie(id)
+      // if successful refresh the list of nominated movies
       .then((res) => loadMovies())
       .catch((err) => console.log(err));
   };
