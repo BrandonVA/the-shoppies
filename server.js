@@ -7,6 +7,7 @@ const app = express();
 const { PORT } = require("./config");
 console.log(`Your PORT is ${PORT}`); // 8626
 
+// Serve up static assets (usually on heroku)
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 }
@@ -14,10 +15,7 @@ if (process.env.NODE_ENV === "production") {
 // Define middleware here
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-// Serve up static assets (usually on heroku)
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"));
-}
+
 // Add routes, both API and view
 app.use(routes);
 
