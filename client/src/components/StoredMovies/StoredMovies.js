@@ -6,33 +6,38 @@ const StoredMovies = ({ nominatedMovies, deleteMovie }) => {
   return (
     <Row className="m-3 p-3">
       {nominatedMovies.map((movie) => (
-        <Col xl={12} key={movie._id}>
-          <Row>
-            <Col xl={8}>
-              <h4>{movie.title}</h4>
-            </Col>
-            <Col xl={4}>
-              {" "}
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                <Button className="m-1" onClick={() => deleteMovie(movie._id)}>
-                  Remove
-                </Button>
-              </div>
-            </Col>
-          </Row>
+        <Col
+          xl={12}
+          key={movie._id}
+          style={{ borderBottom: "1px solid grey", paddingTop: "10px" }}
+        >
           <Row>
             <Col
-              md={2}
+              sm={2}
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <Image className="image-fluid" src={movie.image} thumbnail />
+              <Image
+                style={{ minWidth: "85px" }}
+                className="image-fluid"
+                src={movie.image}
+                thumbnail
+              />
             </Col>
-            <Col md={10}>
+            <Col sm={7}>
+              <h4>{movie.title}</h4>
               <p>Release Year: {movie.releaseYear}</p>
+            </Col>
+            <Col sm={3}>
+              {" "}
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button className="m-1" onClick={() => deleteMovie(movie._id)}>
+                  Remove
+                </Button>
+              </div>
             </Col>
           </Row>
 
