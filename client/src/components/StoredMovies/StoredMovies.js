@@ -2,7 +2,6 @@ import React from "react";
 import { Row, Col, Button, Image } from "react-bootstrap";
 
 const StoredMovies = ({ nominatedMovies, deleteMovie }) => {
-  console.log(nominatedMovies);
   return (
     <Row className="m-3 p-3">
       {nominatedMovies.map((movie) => (
