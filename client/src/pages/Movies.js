@@ -12,6 +12,7 @@ import {
 import StoredMovies from "../components/StoredMovies/StoredMovies";
 
 function Movie() {
+  const [banner, setBanner] = useState(false);
   const [movies, setMovies] = useState([]);
   const [formObject, setFormObject] = useState({});
   const [cachedMovies, setCachedMovies] = useState([]);
@@ -32,7 +33,7 @@ function Movie() {
     };
     // Making the api call to save movie to the db
     API.saveMovie(movieToSave)
-      .then((res) => {
+      .then(() => {
         // Refresh the saved movies list
         loadMovies();
       })
@@ -44,28 +45,30 @@ function Movie() {
     const { name, value } = event.target;
     // Updating state with the current value
     setFormObject({ ...formObject, [name]: value });
-    // Creating a filter method that...
-    const refinedMovies = cachedMovies.filter((movie) => {
-      // will check if the new displayed results has the new value
-      if (movie.Title.toLowerCase().includes(value) === true) {
-        return movie;
-      }
-    });
-    // sets the state to the new results.
-    setMovies(refinedMovies);
+    if (movies) {
+      // Creating a filter method that...
+      const refinedMovies = cachedMovies.filter((movie) => {
+        // will check if the new displayed results has the new value
+        if (movie.Title.toLowerCase().includes(value) === true) {
+          return movie;
+        }
+      });
+      // sets the state to the new results.
+      setMovies(refinedMovies);
+    }
   };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    // encode the title that you are trying to search
-    const encodeTitle = encodeURI(formObject.title);
     // Calls the search movie function that will make an api call
-    searchMovie(encodeTitle);
+    searchMovie(formObject.title);
   };
 
   const searchMovie = (title) => {
+    // encode the title that you are trying to search
+    const encodeTitle = encodeURI(title);
     // Makes the api call for searching for a movie
-    API.searchOMDb(title)
+    API.searchOMDb(encodeTitle)
       .then((res) => {
         // Sets state and cached movies to be displayed.
         setMovies(res.data.Search);
@@ -80,6 +83,7 @@ function Movie() {
       .then((res) => {
         // then updated state with results
         setNominatedMovies(res.data);
+        res.data.length >= 5 ? setBanner(true) : setBanner(false);
         // Creating an array for holding a list of the imdb IDs
         //    This is used for setting the disabled value for save movie btn
         //    which will make it so the user can't save it again.
@@ -102,21 +106,29 @@ function Movie() {
       .then((res) => loadMovies())
       .catch((err) => console.log(err));
   };
+  const handleEnter = (event) => {
+    // event.preventDefault();
+    console.log(event.key);
+    if (event.key === "Enter") {
+      searchMovie(formObject.title);
+    }
+  };
 
   return (
-    <main style={{ margin: "10px" }}>
-      <Jumbotron className="text-center">
+    <main style={{ margin: "5px" }}>
+      <Jumbotron className="text-center py-2">
         <h1>Looking For a Movie?</h1>
         <p>Search for IMDb movies</p>
         <InputGroup
-          style={{ width: "350px", margin: "2rem auto" }}
+          style={{ width: "350px", margin: ".5rem auto" }}
           className="mb-3"
         >
           <FormControl
             aria-describedby="search input"
             name="title"
-            placeholder="Title (required)"
+            placeholder="Movie Title (required)"
             onChange={handleInputChange}
+            onKeyDown={handleEnter}
           />
           <InputGroup.Append>
             <Button
@@ -128,20 +140,37 @@ function Movie() {
             </Button>
           </InputGroup.Append>
         </InputGroup>
+        <Button
+          variant="outline-info"
+          onClick={() => {
+            navigator.clipboard.writeText(window.location);
+          }}
+        >
+          Copy Link
+        </Button>
       </Jumbotron>
 
       <div>
+        {banner && (
+          <div className="alert alert-danger text-center" role="alert">
+            <h5>
+              You have hit the goal of 5 Movies nominated Please Remove a movie
+              to add a new one!
+            </h5>
+          </div>
+        )}
         <Row>
-          <Col sm={6} style={{ borderLeft: " 1px solid grey" }}>
-            {movies.length > 0 ? (
+          <Col md={6} style={{ borderLeft: " 1px solid grey" }}>
+            {movies ? (
               <div>
-                <Jumbotron className="text-center">
+                <Jumbotron className="text-center py-2">
                   <h2>Search Results </h2>
                 </Jumbotron>
                 <SearchResults
                   savedMoveIDs={savedMoveIDs}
                   saveMovie={saveMovie}
                   movies={movies}
+                  banner={banner}
                 />
               </div>
             ) : (
@@ -151,10 +180,10 @@ function Movie() {
             )}
           </Col>
 
-          <Col sm={6}>
+          <Col md={6}>
             {nominatedMovies.length ? (
               <div>
-                <Jumbotron className="text-center">
+                <Jumbotron className="text-center py-2">
                   <h2>Movies Nominated</h2>
                 </Jumbotron>
                 <StoredMovies
