@@ -107,8 +107,6 @@ function Movie() {
       .catch((err) => console.log(err));
   };
   const handleEnter = (event) => {
-    // event.preventDefault();
-    console.log(event.key);
     if (event.key === "Enter") {
       searchMovie(formObject.title);
     }
@@ -117,8 +115,8 @@ function Movie() {
   return (
     <main style={{ margin: "5px" }}>
       <Jumbotron className="text-center py-2">
-        <h1>Looking For a Movie?</h1>
-        <p>Search for IMDb movies</p>
+        <h1>Movie awards for entrepreneurs</h1>
+        <p>Search IMDb for movies to nominate!</p>
         <InputGroup
           style={{ width: "350px", margin: ".5rem auto" }}
           className="mb-3"
@@ -161,7 +159,7 @@ function Movie() {
         )}
         <Row>
           <Col md={6} style={{ borderLeft: " 1px solid grey" }}>
-            {movies ? (
+            {movies && movies.length > 0 ? (
               <div>
                 <Jumbotron className="text-center py-2">
                   <h2>Search Results </h2>
